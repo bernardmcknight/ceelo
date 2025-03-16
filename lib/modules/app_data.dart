@@ -1,5 +1,4 @@
 
-import 'dart:math';
 
 class AppData{
   static final AppData _instance = AppData._internal();
@@ -92,31 +91,4 @@ class AppData{
     bankTurn = true;
     currentBet = 0;
   }
-  //Bank Deterrminatiio Rolls
-  void possessBank(){
-     final Random _random = Random();
-     
-     String playerName = 'Player';
-     String bankName = 'Bank';
-     bool isPlayerBank = false;
-     // ignore: unused_local_variable
-     bool isBankTheBank = false;
-
-     int playerDie = _random.nextInt(6) + 1;
-     int bankDie = _random.nextInt(6) + 1;
-
-      if(playerDie > bankDie){
-        isPlayerBank = true;
-      }else if(playerDie < bankDie){
-        isBankTheBank = true;
-      }else{
-        possessBank();
-      }
-      if(isPlayerBank){
-        bankName = playerName;
-        playerName = bankName;
-      }   
-
-
-
-}
+  
