@@ -1,33 +1,41 @@
 import 'dart:math';
-// import 'bank_roll_screen.dart'; // Import the BankRollScreen class
 
-class Bankroll {
-  //Bank Deterrminatiio Rolls
-  String possessBank(){
-     final Random random = Random();
-     
-     String playerName = 'Player';
-     String bankName = 'Bank';
-     // ignore: unused_local_variable
-     bool isBankTheBank = false;
-     bool isPlayerBank = false;
+import 'package:flutter/material.dart';
 
-     int playerDie = random.nextInt(6) + 1;
-     int bankDie = random.nextInt(6) + 1;
+class BankRoll extends StatefulWidget {
+  BankRoll({super.key, required this.playerName, required this.bankName});
 
-      if(playerDie > bankDie){
-        isPlayerBank = true;
-        return 'Player is the bank';
-      }
-      if(playerDie < bankDie){
-        isBankTheBank = true;
-        return 'Bank is the bank';
-      }else{
-        possessBank();
-      }
-      return 'Player: $playerName, Bank: $bankName';   
+  final String playerName;
+  final String bankName;
+  bool isPlayerBank = false;
+  int playerDie = 0; // To store the player's die roll
+  int bankDie = 0; // To store the bank's die roll
 
+  @override
+  _BankRollState createState() => _BankRollState();
+  Widget build(BuildContext context) {
+    return Container();
+  }
 
-
+  void rollForBank() {
+    final Random random = Random();
+    playerDie = random.nextInt(6) + 1; // Roll a die for the player
+    bankDie = random.nextInt(6) + 1; // Roll a die for the bank
+    isPlayerBank = playerDie > bankDie; // Determine who is the bank
+  }
+  // Removed invalid return statement
 }
+
+class _BankRollState extends State<BankRoll> {
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    throw UnimplementedError();
+  }
 }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }

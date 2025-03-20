@@ -53,6 +53,12 @@ class BankRoll extends StatelessWidget {
 
   const BankRoll({super.key});
 
+  get playerDie => null;
+
+  get bankDie => null;
+
+  void rollForBank() {}
+
 
 }
 // Removed duplicate app_data class

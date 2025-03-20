@@ -1,5 +1,6 @@
+import 'package:cee_lo_big_bank_edition/screens/bank_roll_screen.dart';
 import 'package:flutter/material.dart';
-import 'game_screen.dart'; // Import the game screen
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -18,7 +19,7 @@ class HomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const GameScreen()),
+                  MaterialPageRoute(builder: (context) => const BankRollScreen()),
                 );
               },
               child: const Text('Start Game'),
