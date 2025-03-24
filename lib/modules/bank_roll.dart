@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class BankRoll extends StatefulWidget {
   BankRoll({super.key, required this.playerName, required this.bankName});
 

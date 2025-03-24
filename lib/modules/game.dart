@@ -48,13 +48,64 @@ class GameState extends State<Game> {
       return "Roll Again";
     }
   }
+  String comparePlayerToBank(String bankResult, String playerResult){
+    if(playerResult == bankResult) {
+      return "Push!";
+    }
+
+
+    List<String> priority = ["Trips", "Bank Roll", "Head Cracks", "Acey", "Loser", "Roll Again"];
+      int rank(String result){
+        if(result.startsWith("Trips")) return 0;
+        if(result.startsWith("Point")) return 1; // Replace with appropriate logic if needed
+        return priority.indexOf(result);
+    } 
+
+     int bankRank = rank(bankResult);
+     int playerRank = rank(playerResult);
+
+     if(playerRank > bankRank) return "Player Wins!";
+     if(playerRank < bankRank) return "Bank Wins!";
+
+     if(bankResult.startsWith("Point") && playerResult.startsWith("Point")){
+       int playerPoint = int.parse(playerResult.split(" ")[1]);
+       int bankPoint = int.parse(bankResult.split(" ")[1]);
+       if(playerPoint > bankPoint) return "Player Wins!";
+       if(playerPoint < bankPoint) return "Bank Wins!";
+       return "Push!";
+      }
+      return "Bank Rolls again!";
+     
+
+
+     
+     
+  }
 
 
   void _rollDice() {
     setState(() {
       _dice = rollDice();
+      List<int> bankRollDice = rollDice();
+      String bankResult = determineOutcome(bankRollDice);
+      List<int> playerRollDice = rollDice();
+      String playerResult = determineOutcome(_dice);
+
+      // Keep rolling until bank gets a valid roll
+      while (bankResult == "Roll Again") {
+        bankRollDice = rollDice();
+        bankResult = determineOutcome(bankRollDice);
+      }
+      while (playerResult == "Roll Again") {
+        playerRollDice = rollDice();
+        playerResult = determineOutcome(playerRollDice);
+      }
+      String result = comparePlayerToBank(bankResult, playerResult);
+      // You can use the result variable here, for example, print it or update the UI
+      print(result);
     });
   }
+  
 
   
   @override

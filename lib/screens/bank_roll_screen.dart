@@ -1,89 +1,125 @@
+import 'dart:async';
+import 'dart:math';
+import 'package:cee_lo_big_bank_edition/screens/game_screen.dart';
 import 'package:flutter/material.dart';
 import '../modules/bank_roll.dart';
-import 'game_screen.dart'; // Import the updated BankRoll class
 
 class BankRollScreen extends StatefulWidget {
   const BankRollScreen({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _BankRollScreenState createState() => _BankRollScreenState();
 }
 
 class _BankRollScreenState extends State<BankRollScreen> {
   final BankRoll bankRoll = BankRoll(playerName: 'Player', bankName: 'Bank');
   String resultMessage = "Tap to roll the dice!";
+  bool rolling = false;
+  bool isPlayerRolling = true;
   int playerDie = 0; // To store the player's die roll
   int bankDie = 0; // To store the bank's die roll
 
   void _rollForBank() {
     setState(() {
       bankRoll.rollForBank();
-      playerDie = bankRoll.playerDie; // Get the player's die roll
-      bankDie = bankRoll.bankDie; // Get the bank's die roll
-      resultMessage = bankRoll.isPlayerBank
-          ? "${bankRoll.playerName} is now the Bank"
-          : "${bankRoll.bankName} is now the Bank";
+      playerDie = bankRoll.playerDie;
+      bankDie = bankRoll.bankDie;
+      rolling = true;
+      resultMessage = bankRoll.isPlayerBank ? "${bankRoll.playerName} is now the Bank" : "${bankRoll.bankName} is now the Bank";
     });
-    Future.delayed(const Duration(seconds: 2), () {
-      Navigator.push(context,
-      MaterialPageRoute(builder:(context)=> const GameScreen(),
-      ),
-      );
-    }); // Add a delay before navigating to the next screen   
+
+    Timer(const Duration(seconds: 2), () {
+      setState(() {
+        bankRoll.playerDie = (Random().nextInt(6) + 1); // Roll a random die for the player
+        isPlayerRolling = false;
+      });
+    });
+
+    Timer(const Duration(seconds: 4), () {
+      if (!mounted) return; // Ensure the widget is still mounted
+      setState(() {
+        bankRoll.bankDie = (Random().nextInt(6) + 1); // Roll a random die for the bank
+        rolling = false;
+        resultMessage = bankRoll.isPlayerBank ? "${bankRoll.playerName} is the Bank" : "${bankRoll.bankName} is the Bank";
+      });
+
+      Future.delayed(const Duration(seconds: 2), () {
+        // ignore: use_build_context_synchronously
+        Navigator.push(context,
+        MaterialPageRoute(builder:(context) => const GameScreen(),
+        ),
+        );  
+      });
+    });
   }
 
-  String getResult() {
-    return "Result is ready"; // Ensure a valid String is returned
-  }
+  
+ 
 
-  // Duplicate declaration removed
-
-  void updateMessage() {
-    resultMessage = "New message";
-  }
-
-  void displayMessage() {
-    print(resultMessage); // Handle null case
-  }
-
-  String getBankResult() {
-    return bankRoll.isPlayerBank ? "${bankRoll.playerName} is now the Bank" : "${bankRoll.bankName} is now the Bank";
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bank Roll'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              "Player Die: $playerDie",
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              "Bank Die: $bankDie",
-              style: const TextStyle(fontSize: 20),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              resultMessage,
-              style: const TextStyle(fontSize: 18),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _rollForBank,
-              child: const Text('Roll for Bank'),
-            ),
+ @override
+ Widget build(BuildContext context) {
+   return Scaffold(
+     appBar: AppBar(
+       title: const Text('Bank Roll'),
+     ),
+     body: Center(
+       child: Column(
+         mainAxisAlignment: MainAxisAlignment.center,
+         children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Column(
+                children: [
+                  Text(
+                    "Player Rolls",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: isPlayerRolling ? Colors.green : Colors.black,
+                      fontWeight: isPlayerRolling ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "$playerDie",
+                    style: const TextStyle(fontSize: 48, color: Colors.blue),
+                  ),
+                ],
+              ),
+              Column(
+                children: [
+                  Text(
+                    "Bank Rolls",
+                      style: TextStyle(
+                      fontSize: 18,
+                      color: isPlayerRolling ? Colors.black : Colors.green,
+                      fontWeight: isPlayerRolling ? FontWeight.normal : FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "$bankDie",
+                    style: const TextStyle(fontSize: 48, color: Colors.blue),
+                  ),
+                ],
+              ),
+            ],
+          ),
+           const SizedBox(height: 40),
+           ElevatedButton(
+             onPressed: _rollForBank,
+             child: const Text('Roll for Bank'),
+           ),
+           const SizedBox(height: 30),
+           Text(
+             resultMessage,
+             style: const TextStyle(fontSize: 24, color: Colors.red),
+             textAlign: TextAlign.center,
+           ),
           ],
         ),
       ),
     );
   }
 }
-

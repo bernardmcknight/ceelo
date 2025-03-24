@@ -6,34 +6,41 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Cee-Lo Big Bank Edition'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const BankRollScreen()),
-                );
-              },
-              child: const Text('Start Game'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Add functionality for instructions or other features
-              },
-              child: const Text('Instructions'),
-            ),
-          ],
+  Widget build(BuildContext context){
+    final size = MediaQuery.of(context).size;
+    
+    return Stack(
+      children: [
+        Image.asset(
+          'lib/assets/images/home_screen.png',
+          width: size.width,
+          height: size.height,
+          fit: BoxFit.fill,
         ),
-      ),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const BankRollScreen()),
+                  );
+                },
+                child: const Text('Start Game'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // Add functionality for instructions or other features
+                },
+                child: const Text('Instructions'),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

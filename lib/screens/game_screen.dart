@@ -1,21 +1,36 @@
 import 'package:flutter/material.dart';
 import '../modules/game.dart'; // Import the game class
+import '../modules/app_data.dart'; // Import the AppData class
+import '../modules/dice_dancing.dart'; // Import the DiceDancing widget and its state class
 
 class GameScreen extends StatefulWidget {
   const GameScreen({super.key});
 
   @override
-  // ignore: library_private_types_in_public_api
   _GameScreenState createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  List<int> _dice = [1, 1, 1];
+  final GlobalKey<DiceDancingState> _dice1Key = GlobalKey();
+  final GlobalKey<DiceDancingState> _dice2Key = GlobalKey();
+  final GlobalKey<DiceDancingState> _dice3Key = GlobalKey();
+
   final GameState _gameState = GameState(); // Create an instance of the GameState class
 
   void _rollDice() {
-    setState(() {
-      _dice = _gameState.rollDice();
+    // Trigger the dice animations
+    _dice1Key.currentState?.roll();
+    _dice2Key.currentState?.roll();
+    _dice3Key.currentState?.roll();
+
+    // Update the dice values after the animation
+    Future.delayed(const Duration(seconds: 1), () {
+      setState(() {
+        List<int> diceValues = _gameState.rollDice();
+        AppData().dice1Key = diceValues[0];
+        AppData().dice2Key = diceValues[1];
+        AppData().dice3Key = diceValues[2];
+      });
     });
   }
 
@@ -23,36 +38,45 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Cee-Lo Big Bank Edition'),
+        title: const Text('Are We Rolling?'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: _dice.map((value) => Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  value.toString(),
-                  style: const TextStyle(fontSize: 24),
-                ),
-              )).toList(),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _rollDice,
-              child: const Text('Roll Dice'),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              _gameState.determineOutcome(_dice), // Use the game logic to determine the outcome
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Display the dice animations
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              DiceDancing(key: _dice1Key, onRollCompleted: (int ) {  },),
+              const SizedBox(width: 16),
+              DiceDancing(key: _dice2Key, onRollCompleted: (int ) {  },),
+              const SizedBox(width: 16),
+              DiceDancing(key: _dice3Key, onRollCompleted: (int ) {  },),
+            ],
+          ),
+          const SizedBox(height: 32),
+
+          // Roll Dice Button
+          ElevatedButton(
+            onPressed: _rollDice,
+            child: const Text('Roll Dice'),
+          ),
+
+          const SizedBox(height: 32),
+
+          // Display the dice results
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "Dice Results: ${AppData().dice1Key}, ${AppData().dice2Key}, ${AppData().dice3Key}",
               style: const TextStyle(fontSize: 24),
+              textAlign: TextAlign.center,
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
+   
   }
 }
 
