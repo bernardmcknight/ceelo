@@ -176,147 +176,147 @@ class AppData {
     }
 
   // Bank Method
-  String bank() {
-    List<int> bankRoll = rollDice();
-    bankRoll.sort();
-    _bankDiceRoll = bankRoll;
+   //String bank() {
+  //   List<int> bankRoll = rollDice();
+  //   bankRoll.sort();
+  //   _bankDiceRoll = bankRoll;
 
-    String result = determineOutcome(bankRoll);
-    print("Bank rolled: $bankRoll -> $result");
+  //   String result = determineOutcome(bankRoll);
+  //   print("Bank rolled: $bankRoll -> $result");
 
-    if (["Trips", "Bank Roll", "Head Crack"].contains(result)) {
-      print("Bank wins!");
-      AppData().isBankTurn = true;
-    } else if (["Acey", "Loser"].contains(result)) {
-      print("Player wins!");
-      setIsBankTurn(false);//add an another else statement for player turn
-    } 
-    while(result == "Roll Again");// move this to the top of the method
-    print('Bank rolled $result, now it is the player turn');
-    return result;
-  }
+  //   if (["Trips", "Bank Roll", "Head Crack"].contains(result)) {
+  //     print("Bank wins!");
+  //     AppData().isBankTurn = true;
+  //   } else if (["Acey", "Loser"].contains(result)) {
+  //     print("Player wins!");
+  //     setIsBankTurn(false);//add an another else statement for player turn
+  //   } 
+  //   while(result == "Roll Again");// move this to the top of the method
+  //   print('Bank rolled $result, now it is the player turn');
+  //   return result;
+  // }
   
     // Play Turn Method
-  void playTurn() {
-    final appData = AppData();
-    String bankResult = '';
-    String playerResult = '';
-    appData.bank();
+  // void playTurn() {
+  //   final appData = AppData();
+  //   String bankResult = '';
+  //   String playerResult = '';
+  //   appData.bank();
 
-    do{
-      bankResult = appData.bank();
-      if(["Trips", "Bank Roll", "Head Crack"].contains(bankResult)){
-        print("Bank wins!");
-        return;
-      }else if(["Acey", "Loser"].contains(bankResult)){
-        print("Player wins!");
-        return;
-      }
-    }while(bankResult == "Roll Again");
+  //   do{
+  //     bankResult = appData.bank();
+  //     if(["Trips", "Bank Roll", "Head Crack"].contains(bankResult)){
+  //       print("Bank wins!");
+  //       return;
+  //     }else if(["Acey", "Loser"].contains(bankResult)){
+  //       print("Player wins!");
+  //       return;
+  //     }
+  //   }while(bankResult == "Roll Again");
 
-    appData.setIsBankTurn(false);
+  //   appData.setIsBankTurn(false);
 
-    //Player's turn
-    do{
-      playerResult = nonBank(bankResult);
-      if(["Trips","Bank Roll","Head Crack"].contains(playerResult)){
-        print("Player wins with $playerResult!");
-        return;
-      }else if(["Acey","Loser"].contains(playerResult)){
-        print(" $AppData.getPlayerName() loses with $playerResult!");
-        return;
-      }
-      final outcome = comparePlayerToBank(bankResult, playerResult);
-      if(outcome == "Player Wins!"){
-        print("$AppData.getPlayerName() beats the $AppData.getBankName()! $AppData.getPlayerName() wins!");
-        return;
-      }else if(outcome == "Bank Wins!"){
-        print("$AppData.getBankName() beats the $AppData.getPlayerName()! $AppData.getBankName() wins!");
-        return;
-      }else if(outcome == "Push!"){
-        print("Push! $AppData.getBankName() it's your turn!");
-        AppData().setIsBankTurn(true);
-        Future.delayed(const Duration(milliseconds: 600), () {
-          playTurn();
-        });
-        return;
-    }
-    }while(playerResult == "Roll Again");
-  }
+  //   //Player's turn
+  //   do{
+  //     playerResult = nonBank(bankResult);
+  //     if(["Trips","Bank Roll","Head Crack"].contains(playerResult)){
+  //       print("Player wins with $playerResult!");
+  //       return;
+  //     }else if(["Acey","Loser"].contains(playerResult)){
+  //       print(" $AppData.getPlayerName() loses with $playerResult!");
+  //       return;
+  //     }
+  //     final outcome = comparePlayerToBank(bankResult, playerResult);
+  //     if(outcome == "Player Wins!"){
+  //       print("$AppData.getPlayerName() beats the $AppData.getBankName()! $AppData.getPlayerName() wins!");
+  //       return;
+  //     }else if(outcome == "Bank Wins!"){
+  //       print("$AppData.getBankName() beats the $AppData.getPlayerName()! $AppData.getBankName() wins!");
+  //       return;
+  //     }else if(outcome == "Push!"){
+  //       print("Push! $AppData.getBankName() it's your turn!");
+  //       AppData().setIsBankTurn(true);
+  //       Future.delayed(const Duration(milliseconds: 600), () {
+  //         playTurn();
+  //       });
+  //       return;
+  //   }
+  //   }while(playerResult == "Roll Again");
+   //}
 
   // Non-Bank Method
-  String nonBank(String bankResult) {
-    List<int> playerRoll = [1, 1, 1]; // Initialize with default dice roll
-    playerRoll = AppData().rollDice();
-    print("is it time for me!");
-    String playerResult = AppData().determineOutcome(playerRoll);
+//   String nonBank(String bankResult) {
+//     List<int> playerRoll = [1, 1, 1]; // Initialize with default dice roll
+//     playerRoll = AppData().rollDice();
+//     print("is it time for me!");
+//     String playerResult = AppData().determineOutcome(playerRoll);
 
-    int maxRetries = 10;
-    int retries = 0;
+//     int maxRetries = 10;
+//     int retries = 0;
     
-    do {
-      playerRoll = AppData().rollDice();
-      playerRoll.sort();
-      playerResult = AppData().determineOutcome(playerRoll);
-      print("Player rolled: $playerRoll -> $playerResult");
+//     do {
+//       playerRoll = AppData().rollDice();
+//       playerRoll.sort();
+//       playerResult = AppData().determineOutcome(playerRoll);
+//       print("Player rolled: $playerRoll -> $playerResult");
     
-    if(["Bank Roll"].contains(playerResult)){
-      print("Player takes bank!");
-      AppData().setIsBankTurn(true);
-      return playerResult;
-    }else if(["Trips", "Head Crack"].contains(playerResult)){
-      print("Player Wins!");
-      return playerResult;
-    }
-    retries++;
-    if(retries >= maxRetries){
-      print("Max retries reached, rolling again.");
-      break;
-    }
-    } while (playerResult == "Roll Again");
+//     if(["Bank Roll"].contains(playerResult)){
+//       print("Player takes bank!");
+//       AppData().setIsBankTurn(true);
+//       return playerResult;
+//     }else if(["Trips", "Head Crack"].contains(playerResult)){
+//       print("Player Wins!");
+//       return playerResult;
+//     }
+//     retries++;
+//     if(retries >= maxRetries){
+//       print("Max retries reached, rolling again.");
+//       break;
+//     }
+//     } while (playerResult == "Roll Again");
 
       
 
-    int rank(String result){
-      List<String> priority = ["Trips", "Bank Roll", "Head Crack",
-       "Fever", "Box", "Tracy", "Deuce", "Acey", "Loser"];
-      return priority.indexOf(result);
-    }
+//     int rank(String result){
+//       List<String> priority = ["Trips", "Bank Roll", "Head Crack",
+//        "Fever", "Box", "Tracy", "Deuce", "Acey", "Loser"];
+//       return priority.indexOf(result);
+//     }
 
-    int playerRank = rank(playerResult);
-    int bankRank = rank(bankResult);
+//     int playerRank = rank(playerResult);
+//     int bankRank = rank(bankResult);
 
-    if(playerResult.startsWith("Point") && bankResult.startsWith("Point")){
-      int playerPoint = int.parse(playerResult.split(" ")[1]);
-      int bankPoint = int.parse(bankResult.split(" ")[1]);
+//     if(playerResult.startsWith("Point") && bankResult.startsWith("Point")){
+//       int playerPoint = int.parse(playerResult.split(" ")[1]);
+//       int bankPoint = int.parse(bankResult.split(" ")[1]);
 
-      if(playerPoint > bankPoint){
-        print("Player beats the $AppData.getBankName()! $AppData.getPlayerName() wins!");
-        return "Player Wins!";
-      }else if (playerPoint == bankPoint){
-        print("Push! $AppData.getBankName() it's your turn!");
-        AppData().setIsBankTurn(true);
-        return "Push!";
-      }else{
-        print("$AppData.getBankName() beats the $AppData.getPlayerName()! $AppData.getBankName() wins!");
-        AppData().setIsBankTurn(true);
-        return "Bank Wins!";
-      }
-    }
-    if(playerRank > bankRank){
-      print("$AppData.getPlayerName() beats the $AppData.getBankName()! $AppData.getPlayerName() wins!");
-      return "Player Wins!";
-    }else if(playerRank == bankRank){
-      print("Push! $AppData.getBankName() it's your turn!");
-      AppData().setIsBankTurn(true);
-      return "Push!";
-    }else{
-      print("$AppData.getBankName() beats the $AppData.getPlayerName()! $AppData.getBankName() wins!");
-      AppData().setIsBankTurn(true);
-      return "Bank Wins!";
-    }
-// Default return statement
-  }
+//       if(playerPoint > bankPoint){
+//         print("Player beats the $AppData.getBankName()! $AppData.getPlayerName() wins!");
+//         return "Player Wins!";
+//       }else if (playerPoint == bankPoint){
+//         print("Push! $AppData.getBankName() it's your turn!");
+//         AppData().setIsBankTurn(true);
+//         return "Push!";
+//       }else{
+//         print("$AppData.getBankName() beats the $AppData.getPlayerName()! $AppData.getBankName() wins!");
+//         AppData().setIsBankTurn(true);
+//         return "Bank Wins!";
+//       }
+//     }
+//     if(playerRank > bankRank){
+//       print("$AppData.getPlayerName() beats the $AppData.getBankName()! $AppData.getPlayerName() wins!");
+//       return "Player Wins!";
+//     }else if(playerRank == bankRank){
+//       print("Push! $AppData.getBankName() it's your turn!");
+//       AppData().setIsBankTurn(true);
+//       return "Push!";
+//     }else{
+//       print("$AppData.getBankName() beats the $AppData.getPlayerName()! $AppData.getBankName() wins!");
+//       AppData().setIsBankTurn(true);
+//       return "Bank Wins!";
+//     }
+// // Default return statement
+//   }
 
   getPlayerResult() {}
   
