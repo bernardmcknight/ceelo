@@ -108,7 +108,7 @@ class _BankRollScreenState extends State<BankRollScreen> {
           ),
            const SizedBox(height: 40),
            ElevatedButton(
-             onPressed: _rollForBank,
+             onPressed: rolling ? null : _rollForBank,
              child: const Text('Roll for Bank'),
            ),
            const SizedBox(height: 30),

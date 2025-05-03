@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:math';
+import 'app_data.dart'; // Import the AppData class
+
+
 
 
 class Game extends StatefulWidget {
@@ -9,14 +12,92 @@ class Game extends StatefulWidget {
   GameState createState() => GameState();
 }
 
-
 class GameState extends State<Game> {
-  final Random _random = Random();
-  List<int> _dice = [1, 1, 1];
-  List<int> rollDice() {
-    return <int>[_random.nextInt(6) + 1, _random.nextInt(6) + 1, _random.nextInt(6) + 1];
+  final AppData appData = AppData();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(''),
+        actions: <Widget>[
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              // Reset the game state here
+              setState(() {
+                // Reset any game-related variables if needed
+              });
+            },
+          ),
+        ],
+      ),
+      body: Center(
+        child: const Text(''),
+      ),
+    );
   }
-  String determineOutcome(List<int> dice) {
+
+  List<int> rollDice() {
+    final Random random = Random();
+    return <int>[random.nextInt(6) + 1, random.nextInt(6) + 1, random.nextInt(6) + 1];
+  }
+  bool isRolling = false;
+
+  String bank() {
+    String result;
+    List<int> roll;
+    int maxRetries = 10;
+    int retries = 0;
+
+    do{
+      roll = appData.rollDice();
+      result = determineOutcome(roll);
+      AppData().setBankDiceRoll(roll);
+      print("Bank rolled: $roll -> $result");
+      if(["Trips", "Bank Roll", "Head Crack"].contains(result)) return result;
+      if(["Acey", "Loser"].contains(result)) return result;
+
+      retries++;
+      if(retries >= maxRetries){
+        print("Max retries reached. Ending turn.");
+        break;
+      }
+    }while(result == "Roll Again");
+    return result;
+  }
+
+  
+  String nonBank() {
+    String playerResult;
+    List<int> roll;
+
+    int maxRetries = 10;
+    int retries = 0;
+    print('is it time for me!');
+    
+
+    do{
+      roll = appData.rollDice(); // Accessing the class-level appData variable
+      print("what is this");
+      playerResult = determineOutcome(roll);
+      appData.setPlayerDiceRoll(roll); // Use the existing appData instance
+      print("Player rolled: $roll -> $playerResult");
+      if(["Trips", "Bank Roll", "Head Crack"].contains(playerResult)) return playerResult;
+      if(["Acey", "Loser"].contains(playerResult)) return playerResult;
+
+      retries++;
+      if(retries >= maxRetries){
+        print("Max retries reached. Ending turn.");
+        break;
+      }
+    }while(playerResult == "Roll Again");
+    return playerResult;
+
+  }
+  
+  
+    String determineOutcome(List<int> dice) {
     dice.sort();
     if (dice[0] == dice[1] && dice[1] == dice[2]) {
       return "Trips";
@@ -25,7 +106,7 @@ class GameState extends State<Game> {
       return "Bank Roll";
     }
     if ((dice[0] == dice[1] && dice[2] == 6) || (dice[0] == dice[2] && dice[1] == 6) || (dice[1] == dice[2] && dice[0] == 6)) {
-      return "Head Cracks";
+      return "Head Crack";
     }
     if((dice[0] == dice[1] && dice[2] == 5) || (dice[0] == dice[2] && dice[1] == 5) || (dice[1] == dice[2] && dice[0] == 5)) {
       return "Fever";
@@ -49,91 +130,21 @@ class GameState extends State<Game> {
     }
   }
   String comparePlayerToBank(String bankResult, String playerResult){
-    if(playerResult == bankResult) {
+    if(bankResult.startsWith("Point") && playerResult.startsWith("Point")){
+      int bankPoint = int.parse(bankResult.split("")[1]);
+      int playerPoint = int.parse(playerResult.split("")[1]);
+      if(playerPoint > bankPoint) return "Player Wins!";
+      if(playerPoint < bankPoint) return "Bank Wins!";
       return "Push!";
     }
+    return "Unknown Outcome"; // Ensure a String is always returned
+  }
 
-
-    List<String> priority = ["Trips", "Bank Roll", "Head Cracks", "Acey", "Loser", "Roll Again"];
+      List<String> localOutcomePriority = ["Trips", "Bank Roll", "Head Crack", "Fever","Box","Tracy","Deuce","Acey", "Loser", "Roll Again"];
       int rank(String result){
-        if(result.startsWith("Trips")) return 0;
-        if(result.startsWith("Point")) return 1; // Replace with appropriate logic if needed
-        return priority.indexOf(result);
-    } 
-
-     int bankRank = rank(bankResult);
-     int playerRank = rank(playerResult);
-
-     if(playerRank > bankRank) return "Player Wins!";
-     if(playerRank < bankRank) return "Bank Wins!";
-
-     if(bankResult.startsWith("Point") && playerResult.startsWith("Point")){
-       int playerPoint = int.parse(playerResult.split(" ")[1]);
-       int bankPoint = int.parse(bankResult.split(" ")[1]);
-       if(playerPoint > bankPoint) return "Player Wins!";
-       if(playerPoint < bankPoint) return "Bank Wins!";
-       return "Push!";
+        return localOutcomePriority.indexOf(result);
       }
-      return "Bank Rolls again!";
-     
 
 
-     
-     
-  }
 
-
-  void _rollDice() {
-    setState(() {
-      _dice = rollDice();
-      List<int> bankRollDice = rollDice();
-      String bankResult = determineOutcome(bankRollDice);
-      List<int> playerRollDice = rollDice();
-      String playerResult = determineOutcome(_dice);
-
-      // Keep rolling until bank gets a valid roll
-      while (bankResult == "Roll Again") {
-        bankRollDice = rollDice();
-        bankResult = determineOutcome(bankRollDice);
-      }
-      while (playerResult == "Roll Again") {
-        playerRollDice = rollDice();
-        playerResult = determineOutcome(playerRollDice);
-      }
-      String result = comparePlayerToBank(bankResult, playerResult);
-      // You can use the result variable here, for example, print it or update the UI
-      print(result);
-    });
-  }
-  
-
-  
-  @override
-  Widget build(BuildContext context){
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Cee-Lo Big Bank Edition'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            
-            ElevatedButton(
-              onPressed: _rollDice,
-              child: Text('Roll Dice'),
-            ),
-            Text(
-              "Dice: ${_dice.join(', ')}",
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            Text(
-              determineOutcome(_dice),
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
