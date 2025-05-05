@@ -47,9 +47,9 @@ class _BankRollScreenState extends State<BankRollScreen> {
       Future.delayed(const Duration(seconds: 2), () {
         // ignore: use_build_context_synchronously
         Navigator.push(context,
-        MaterialPageRoute(builder:(context) => const GameScreen(),
-        ),
-        );  
+        MaterialPageRoute(builder:(context) =>  GameScreen(isPlayerBank: bankRoll.isPlayerBank)),
+        );
+          
       });
     });
   }
